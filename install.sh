@@ -104,10 +104,8 @@ function ProjectDeployment() {
     rm -rf /usr/local/bin/export_sharecodes
     rm -rf /usr/local/bin/run_all
     ## 克隆项目
-    wget -P $BASE https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/git_pull.sh
+    git clone -b part3 https://github.com/nima789/JD-FreeFuck.git
     ## 创建目录
-    mkdir $BASE/config
-    mkdir $BASE/log
     bash git_pull.sh
     ## 根据安装目录配置定时任务
     sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
