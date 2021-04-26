@@ -17,16 +17,17 @@
 
 ## ======================================= 定 义 相 关 变 量 ===============================================
 ## 安装目录
-BASE="/opt/jd"
+BASE="/jd"
 ## 项目分支
-JD_BASE_BRANCH="source"
+JD_BASE_BRANCH="part2"
 ## 项目地址
 JD_BASE_URL="https://github.com/nima789/JD-FreeFuck.git"
 ## 活动脚本库私钥
-KEY:"-----BEGIN OPENSSH PRIVATE KEY-----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-----END OPENSSH PRIVATE KEY-----"
-## ========================================================================================================
-
-
+JD_KEY_URL="https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/.ssh/"
+JD_KEY1="config"
+JD_KEY2="jd_base"
+JD_KEY3="jd_scripts"
+JD_KEY4="known_hosts"
 ## ======================================= 定 义 账 户 Cookie ==============================================
 ##
 COOKIE1='""'
@@ -76,7 +77,7 @@ function Installation() {
     if [ $VERIFICATION = "1" ]; then
         PrivateKeyInstallation
         ## 判定私钥是否安装成功，否则跳出
-        ls /root/.ssh | grep id_rsa -wq
+        ls /root/.ssh | grep jd_scripts -wq
         if [ $? -eq 0 ]; then
             ProjectDeployment
             SetConfig
@@ -162,32 +163,38 @@ function EnvStructures() {
 function PrivateKeyInstallation() {
     mkdir -p /root/.ssh
     ## 检测当前用户是否存在私钥，如存在执行备份操作
-    ls /root/.ssh | grep id_rsa.bak -wq
-    if [ $? -eq 0 ]; then
-        rm -rf /root/.ssh/id_rsa
-        echo -e ''
-        echo -e "\033[32m检测到已备份的私钥，跳过备份操作...... \033[0m"
-        echo -e ''
-        sleep 2s
-    else
-        mv /root/.ssh/id_rsa /root/.ssh/id_rsa.bak >/dev/null 2>&1
-    fi
+#    ls /root/.ssh | grep id_rsa.bak -wq
+#    if [ $? -eq 0 ]; then
+#        rm -rf /root/.ssh/id_rsa
+#        echo -e ''
+#        echo -e "\033[32m检测到已备份的私钥，跳过备份操作...... \033[0m"
+#        echo -e ''
+#        sleep 2s
+#    else
+#        mv /root/.ssh/id_rsa /root/.ssh/id_rsa.bak >/dev/null 2>&1
+#    fi
     ## 检测当前用户是否存在公钥，如存在执行备份操作
-    ls /root/.ssh | grep id_rsa.pub.bak -wq
-    if [ $? -eq 0 ]; then
-        rm -rf /root/.ssh/id_rsa.pub
-        echo -e ''
-        echo -e "\033[32m检测到已备份的公钥，跳过备份操作...... \033[0m"
-        echo -e ''
-        sleep 2s
-    else
-        mv /root/.ssh/id_rsa.pub /root/.ssh/id_rsa.pub.bak >/dev/null 2>&1
-    fi
+#    ls /root/.ssh | grep id_rsa.pub.bak -wq
+#    if [ $? -eq 0 ]; then
+#        rm -rf /root/.ssh/id_rsa.pub
+#        echo -e ''
+#        echo -e "\033[32m检测到已备份的公钥，跳过备份操作...... \033[0m"
+#        echo -e ''
+#        sleep 2s
+#    else
+#        mv /root/.ssh/id_rsa.pub /root/.ssh/id_rsa.pub.bak >/dev/null 2>&1
+#    fi
+    ##下载私钥
+    weget -P /root/.ssh &JD_KEY_URL$JD_KEY1
+    weget -P /root/.ssh &JD_KEY_URL$JD_KEY2
+    weget -P /root/.ssh &JD_KEY_URL$JD_KEY3
+    weget -P /root/.ssh &JD_KEY_URL$JD_KEY4
     ## 安装私钥
     chmod 700 /root/.ssh
-    echo -e $KEY >/root/.ssh/id_rsa
-    chmod 600 /root/.ssh/id_rsa
-    ssh-keyscan gitee.com >/root/.ssh/known_hosts
+    chmod 600 /root/.ssh/$JD_KEY1
+    chmod 600 /root/.ssh/$JD_KEY2
+    chmod 600 /root/.ssh/$JD_KEY3
+    chmod 600 /root/.ssh/$JD_KEY4  
 }
 
 ## 项目部署：
@@ -200,10 +207,9 @@ function ProjectDeployment() {
     rm -rf /usr/local/bin/export_sharecodes
     rm -rf /usr/local/bin/run_all
     ## 克隆项目
-    git clone -b $JD_BASE_BRANCH $JD_BASE_URL $BASE
+    wget -P $BASE https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/git_pull.sh
     ## 创建目录
-    mkdir $BASE/config
-    mkdir $BASE/log
+    bash git_pull.sh
     ## 根据安装目录配置定时任务
     sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
     ## 创建项目配置文件与定时任务配置文件
