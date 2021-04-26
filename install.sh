@@ -28,44 +28,8 @@ JD_KEY1="config"
 JD_KEY2="jd_base"
 JD_KEY3="jd_scripts"
 JD_KEY4="known_hosts"
-## ======================================= 定 义 账 户 Cookie ==============================================
-##
-COOKIE1='""'
-COOKIE2='""'
-COOKIE3='""'
-COOKIE4='""'
-COOKIE5='""'
-COOKIE6='""'
-##
-## 配置京东账户注意事项：
-## 1. 将 Cookie部分内容 填入"双引号"内，例 Cookie1='"pt_key=xxxxxx;pt_pin=xxxxxx;"'
-## 2. 本项目可同时运行无限个账号，从第7个账户开始需要自行在项目 config.sh 配置文件中定义变量，例如Cookie7=""
-## ========================================================================================================
-
 
 ## 定义变量：
-## 判定系统是基于 Debian 还是 RedHat
-ls /etc | grep redhat-release -qw
-if [ $? -eq 0 ]; then
-    SYSTEM="RedHat"
-else
-    SYSTEM="Debian"
-fi
-## 系统判定变量（系统名称、系统版本、系统版本号）
-if [ $SYSTEM = "Debian" ]; then
-    SYSTEM_NAME=$(lsb_release -is)
-    SYSTEM_VERSION=$(lsb_release -cs)
-    SYSTEM_VERSION_NUMBER=$(lsb_release -rs)
-elif [ $SYSTEM = "RedHat" ]; then
-    SYSTEM_NAME=$(cat /etc/redhat-release | cut -c1-6)
-    if [ $SYSTEM_NAME = "CentOS" ]; then
-        SYSTEM_VERSION_NUMBER=$(cat /etc/redhat-release | cut -c22-24)
-        CENTOS_VERSION=$(cat /etc/redhat-release | cut -c22)
-    elif [ $SYSTEM_NAME = "Fedora" ]; then
-        SYSTEM_VERSION_NUMBER=$(cat /etc/redhat-release | cut -c16-18)
-    fi
-fi
-
 ## 组合各个函数模块部署项目：
 function Installation() {
     ## 根据各部分函数执行结果判定部署结果
@@ -109,27 +73,13 @@ function EnvJudgment() {
 ## 环境搭建：
 function EnvStructures() {
     Welcome
-    ## CentOS 启用仓库
-    if [ $SYSTEM_NAME = "CentOS" ]; then
-        ## 安装扩展 EPEL 源
-        yum install -y epel-release
-        ## CentOS 8启用 PowerTools 仓库
-        if [ $CENTOS_VERSION == "8" ]; then
-            sed -i "s/enabled=0/enabled=1/g" /etc/yum.repos.d/*PowerTools.repo
-        fi
-        ## 重新建立缓存
-        yum makecache
-    fi
-
     ## 修改系统时区：
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime >/dev/null 2>&1
     timedatectl set-timezone "Asia/Shanghai" >/dev/null 2>&1
     ## 放行控制面板需要用到的端口
     firewall-cmd --zone=public --add-port=5678/tcp --permanent >/dev/null 2>&1
     systemctl reload firewalld >/dev/null 2>&1
-
-    ## 基于 Debian 发行版和及其衍生发行版的软件包安装
-    if [ $SYSTEM = "Debian" ]; then
+    
         ## 更新软件源，列出索引
         apt update
         ## 卸载 Nodejs 旧版本，从而确保安装新版本
@@ -142,48 +92,11 @@ function EnvStructures() {
         DownloadTip
         apt install -y nodejs
         apt autoremove -y
-    ## 基于 RedHat 发行版和及其衍生发行版的软件包安装
-    elif [ $SYSTEM = "RedHat" ]; then
-        ## 更新软件源，建立本地缓存
-        yum makecache
-        ## 卸载 Nodejs 旧版本，从而确保安装新版本
-        yum remove -y nodejs npm >/dev/null 2>&1
-        rm -rf /etc/yum.repos.d/nodesource-*.repo
-        ## 安装需要的软件包
-        yum install -y wget curl net-tools openssh-server git perl moreutils
-        ## 安装 Nodejs 与 npm
-        curl -sL https://rpm.nodesource.com/setup_14.x | bash -
-        DownloadTip
-        yum install -y nodejs
-        yum autoremove -y
-    fi
 }
 
 ## 部署私钥：
 function PrivateKeyInstallation() {
     mkdir -p /root/.ssh
-    ## 检测当前用户是否存在私钥，如存在执行备份操作
-#    ls /root/.ssh | grep id_rsa.bak -wq
-#    if [ $? -eq 0 ]; then
-#        rm -rf /root/.ssh/id_rsa
-#        echo -e ''
-#        echo -e "\033[32m检测到已备份的私钥，跳过备份操作...... \033[0m"
-#        echo -e ''
-#        sleep 2s
-#    else
-#        mv /root/.ssh/id_rsa /root/.ssh/id_rsa.bak >/dev/null 2>&1
-#    fi
-    ## 检测当前用户是否存在公钥，如存在执行备份操作
-#    ls /root/.ssh | grep id_rsa.pub.bak -wq
-#    if [ $? -eq 0 ]; then
-#        rm -rf /root/.ssh/id_rsa.pub
-#        echo -e ''
-#        echo -e "\033[32m检测到已备份的公钥，跳过备份操作...... \033[0m"
-#        echo -e ''
-#        sleep 2s
-#    else
-#        mv /root/.ssh/id_rsa.pub /root/.ssh/id_rsa.pub.bak >/dev/null 2>&1
-#    fi
     ##下载私钥
     weget -P /root/.ssh &JD_KEY_URL$JD_KEY1
     weget -P /root/.ssh &JD_KEY_URL$JD_KEY2
@@ -237,16 +150,6 @@ function ProjectDeployment() {
     source /etc/profile
 }
 
-## 更改配置文件：
-function SetConfig() {
-    sed -i "30c Cookie1=$COOKIE1" $BASE/config/config.sh
-    sed -i "31c Cookie2=$COOKIE2" $BASE/config/config.sh
-    sed -i "32c Cookie3=$COOKIE3" $BASE/config/config.sh
-    sed -i "33c Cookie4=$COOKIE4" $BASE/config/config.sh
-    sed -i "34c Cookie5=$COOKIE5" $BASE/config/config.sh
-    sed -i "35c Cookie6=$COOKIE6" $BASE/config/config.sh
-}
-
 ## 判定控制面板安装结果：
 function PanelJudgment() {
     netstat -tunlp | grep 5678 -wq
@@ -276,7 +179,6 @@ function Welcome() {
     echo -e ''
     echo -e '#####################################################'
     echo -e ''
-    echo -e "      当前操作系统  $SYSTEM_NAME $SYSTEM_VERSION_NUMBER"
     echo -e "      当前系统时间  $(date +%Y-%m-%d) $(date +%H:%M)"
     echo -e ''
     echo -e '#####################################################'
