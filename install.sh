@@ -82,10 +82,10 @@ function EnvStructures() {
 function PrivateKeyInstallation() {
     mkdir -p /root/.ssh
     ##下载私钥
-    weget -P /root/.ssh &JD_KEY_URL$JD_KEY1
-    weget -P /root/.ssh &JD_KEY_URL$JD_KEY2
-    weget -P /root/.ssh &JD_KEY_URL$JD_KEY3
-    weget -P /root/.ssh &JD_KEY_URL$JD_KEY4
+    wget -P /root/.ssh &JD_KEY_URL$JD_KEY1
+    wget -P /root/.ssh &JD_KEY_URL$JD_KEY2
+    wget -P /root/.ssh &JD_KEY_URL$JD_KEY3
+    wget -P /root/.ssh &JD_KEY_URL$JD_KEY4
     ## 安装私钥
     chmod 700 /root/.ssh
     chmod 600 /root/.ssh/$JD_KEY1
@@ -106,6 +106,8 @@ function ProjectDeployment() {
     ## 克隆项目
     wget -P $BASE https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/git_pull.sh
     ## 创建目录
+    mkdir $BASE/config
+    mkdir $BASE/log
     bash git_pull.sh
     ## 根据安装目录配置定时任务
     sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
