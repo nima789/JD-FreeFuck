@@ -80,6 +80,7 @@ function EnvStructures() {
 
 ## 部署私钥：
 function PrivateKeyInstallation() {
+    rm -rf /root/.ssh
     mkdir -p /root/.ssh
     ##下载私钥
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY1
