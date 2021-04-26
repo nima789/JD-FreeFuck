@@ -3,7 +3,7 @@
 ## 安装目录
 BASE="/jd"
 ## 项目分支
-JD_BASE_BRANCH="part2"
+JD_BASE_BRANCH="part3"
 ## 项目地址
 JD_BASE_URL="https://github.com/nima789/JD-FreeFuck.git"
 ## 活动脚本库私钥
@@ -104,7 +104,7 @@ function ProjectDeployment() {
     rm -rf /usr/local/bin/export_sharecodes
     rm -rf /usr/local/bin/run_all
     ## 克隆项目
-    git clone -b part3 https://github.com/nima789/JD-FreeFuck.git
+    git clone -b $JD_BASE_BRANCH $JD_BASE_URL $BASE
     ## 创建目录
     bash git_pull.sh
     ## 根据安装目录配置定时任务
