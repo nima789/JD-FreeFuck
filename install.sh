@@ -57,7 +57,7 @@ function EnvJudgment() {
     ## 网络环境判定：
     ping -c 1 www.baidu.com >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-        apt-get install iputils-ping
+        apt-get install -y iputils-ping
     fi
     ping -c 1 www.baidu.com >/dev/null 2>&1
     if [ $? -ne 0 ]; then
