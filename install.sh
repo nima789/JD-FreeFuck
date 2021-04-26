@@ -130,7 +130,6 @@ function ProjectDeployment() {
     npm config set registry http://registry.npm.taobao.org
     ## 安装控制面板功能
     cp $BASE/sample/auth.json $BASE/config/auth.json
-    npm install -g npm
     cd $BASE/panel
     npm install || npm install --registry=https://registry.npm.taobao.org
     npm install -g pm2
