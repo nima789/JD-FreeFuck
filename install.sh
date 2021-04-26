@@ -82,10 +82,10 @@ function EnvStructures() {
 function PrivateKeyInstallation() {
     mkdir -p /root/.ssh
     ##下载私钥
-    wget -P /root/.ssh &JD_KEY_URL$JD_KEY1
-    wget -P /root/.ssh &JD_KEY_URL$JD_KEY2
-    wget -P /root/.ssh &JD_KEY_URL$JD_KEY3
-    wget -P /root/.ssh &JD_KEY_URL$JD_KEY4
+    wget -P /root/.ssh $JD_KEY_URL$JD_KEY1
+    wget -P /root/.ssh $JD_KEY_URL$JD_KEY2
+    wget -P /root/.ssh $JD_KEY_URL$JD_KEY3
+    wget -P /root/.ssh $JD_KEY_URL$JD_KEY4
     ## 安装私钥
     chmod 700 /root/.ssh
     chmod 600 /root/.ssh/$JD_KEY1
