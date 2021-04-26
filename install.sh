@@ -92,8 +92,11 @@ function EnvStructures() {
 
 ## 部署私钥：
 function PrivateKeyInstallation() {
-    rm -rf /root/.ssh
     mkdir -p /root/.ssh
+    rm -r /root/.ssh/$JD_KEY1
+    rm -r /root/.ssh/$JD_KEY2
+    rm -r /root/.ssh/$JD_KEY3
+    rm -r /root/.ssh/$JD_KEY4
     ##下载私钥
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY1
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY2
@@ -118,8 +121,6 @@ function ProjectDeployment() {
     rm -rf /usr/local/bin/run_all
     ## 克隆项目
     git clone -b $JD_BASE_BRANCH $JD_BASE_URL $BASE
-    ## 创建目录
-    bash git_pull.sh
     ## 根据安装目录配置定时任务
     sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
     ## 创建项目配置文件与定时任务配置文件
