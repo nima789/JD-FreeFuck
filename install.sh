@@ -1,4 +1,12 @@
 #!/bin/env bash
+cat /etc/hosts | grep "raw.githubusercontent.com" -q
+if [ $? -ne 0 ]; then
+  echo "199.232.28.133 raw.githubusercontent.com" >>/etc/hosts
+  echo "185.199.108.133 raw.githubusercontent.com" >>/etc/hosts
+  echo "185.199.109.133 raw.githubusercontent.com" >>/etc/hosts
+  echo "185.199.110.133 raw.githubusercontent.com" >>/etc/hosts
+  echo "185.199.111.133 raw.githubusercontent.com" >>/etc/hosts
+fi
 ## ======================================= 定 义 相 关 变 量 ===============================================
 ## 安装目录
 BASE="/jd"
