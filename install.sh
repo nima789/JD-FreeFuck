@@ -64,6 +64,10 @@ function EnvJudgment() {
         echo -e "\033[31m ----- Network connection error.Please check the network environment and try again later! ----- \033[0m"
         exit
     fi
+    ping -c 1 github.com >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+       echo "54.238.117.237 github.com" >>/etc/hosts
+    fi
 }
 
 ## 环境搭建：
