@@ -7,6 +7,10 @@ if [ $? -ne 0 ]; then
   echo "185.199.110.133 raw.githubusercontent.com" >>/etc/hosts
   echo "185.199.111.133 raw.githubusercontent.com" >>/etc/hosts
 fi
+cat /etc/hosts | grep "github.com" -q
+if [ $? -ne 0 ]; then
+  echo "54.238.117.237 github.com" >>/etc/hosts
+fi
 ## ======================================= 定 义 相 关 变 量 ===============================================
 ## 安装目录
 BASE="/jd"
@@ -63,10 +67,6 @@ function EnvJudgment() {
     if [ $? -ne 0 ]; then
         echo -e "\033[31m ----- Network connection error.Please check the network environment and try again later! ----- \033[0m"
         exit
-    fi
-    ping -c 1 github.com >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-       echo "54.238.117.237 github.com" >>/etc/hosts
     fi
 }
 
