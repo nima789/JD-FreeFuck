@@ -106,10 +106,10 @@ function ProjectDeployment() {
     mkdir $BASE/config
     mkdir $BASE/log
     ## 根据安装目录配置定时任务
-    sed -i "s#BASE#$BASE#g" $BASE/sample/termux.list.sample
+    sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
     ## 创建项目配置文件与定时任务配置文件
     cp $BASE/sample/config.sh.sample $BASE/config/config.sh
-    cp $BASE/sample/termux.list.sample $BASE/config/crontab.list
+    cp $BASE/sample/computer.list.sample $BASE/config/crontab.list
     ## 切换 npm 官方源为淘宝源
     npm config set registry http://registry.npm.taobao.org
     ## 安装控制面板功能
