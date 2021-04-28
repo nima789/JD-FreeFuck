@@ -5,7 +5,7 @@ BASE="/data/data/com.termux/files/home/jd"
 ## 项目分支
 JD_BASE_BRANCH="master"
 ## 项目地址
-JD_BASE_URL="git@jd_scripts_gitee:lxk0301/jd_scripts.git"
+JD_BASE_URL="git@jd_base_gitee:supermanito/jd_base.git"
 ## 活动脚本库私钥
 JD_KEY_BASE="/data/data/com.termux/files/home/.ssh"
 JD_KEY_URL="https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/.ssh2/"
