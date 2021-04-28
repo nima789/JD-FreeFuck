@@ -121,6 +121,9 @@ function ProjectDeployment() {
     rm -rf /usr/local/bin/run_all
     ## 克隆项目
     git clone -b $JD_BASE_BRANCH $JD_BASE_URL $BASE
+    ## 创建目录
+    mkdir $BASE/config
+    mkdir $BASE/log
     ## 根据安装目录配置定时任务
     sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
     ## 创建项目配置文件与定时任务配置文件
