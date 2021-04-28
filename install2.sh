@@ -3,9 +3,9 @@
 ## 安装目录
 BASE="/data/data/com.termux/files/home/jd"
 ## 项目分支
-JD_BASE_BRANCH="master"
+JD_BASE_BRANCH="part3"
 ## 项目地址
-JD_BASE_URL="https://gitee.com/SuperManito/JD-FreeFuck.git"
+JD_BASE_URL="https://github.com/nima789/JD-FreeFuck.git"
 ## 活动脚本库私钥
 JD_KEY_BASE="/data/data/com.termux/files/home/.ssh"
 JD_KEY_URL="https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/.ssh2/"
@@ -102,6 +102,9 @@ function ProjectDeployment() {
     rm -rf /data/data/com.termux/files/usr/bin/run_all
     ## 克隆项目
     git clone -b $JD_BASE_BRANCH $JD_BASE_URL $BASE
+    ## 创建目录
+    mkdir $BASE/config
+    mkdir $BASE/log
     ## 根据安装目录配置定时任务
     sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
     ## 创建项目配置文件与定时任务配置文件
