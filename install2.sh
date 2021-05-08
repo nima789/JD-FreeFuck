@@ -8,7 +8,7 @@ JD_BASE_BRANCH="master"
 JD_BASE_URL="git@jd_base_gitee:supermanito/jd_base.git"
 ## 活动脚本库私钥
 JD_KEY_BASE="/data/data/com.termux/files/home/.ssh"
-JD_KEY_URL="https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/.ssh2/"
+JD_KEY_URL="https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/.ssh2/"
 JD_KEY1="config"
 JD_KEY2="jd_base"
 JD_KEY3="jd_scripts"
