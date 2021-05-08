@@ -1,12 +1,4 @@
 #!/bin/env bash
-cat /etc/hosts | grep "raw.githubusercontent.com" -q
-if [ $? -ne 0 ]; then
-  echo "199.232.28.133 raw.githubusercontent.com" >>/etc/hosts
-  echo "185.199.108.133 raw.githubusercontent.com" >>/etc/hosts
-  echo "185.199.109.133 raw.githubusercontent.com" >>/etc/hosts
-  echo "185.199.110.133 raw.githubusercontent.com" >>/etc/hosts
-  echo "185.199.111.133 raw.githubusercontent.com" >>/etc/hosts
-fi
 ## ======================================= 定 义 相 关 变 量 ===============================================
 ## 安装目录
 BASE="/jd"
@@ -15,7 +7,7 @@ JD_BASE_BRANCH="master"
 ## 项目地址
 JD_BASE_URL="git@jd_base_gitee:supermanito/jd_base.git"
 ## 活动脚本库私钥
-JD_KEY_URL="https://raw.githubusercontent.com/nima789/JD-FreeFuck/part2/.ssh/"
+JD_KEY_URL="https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/.ssh/"
 JD_KEY1="config"
 JD_KEY2="jd_base"
 JD_KEY3="jd_scripts"
