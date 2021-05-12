@@ -85,7 +85,7 @@ function EnvStructures() {
 ## 部署私钥：
 function PrivateKeyInstallation() {
     mkdir -p /root/.ssh
-    ls $JD_KEY_BASE | grep jd_scripts -wq
+    ls /root/.ssh | grep jd_scripts -wq
     if [ $? -eq 0 ]; then
     rm -r $JD_KEY_BASE/$JD_KEY1
     rm -r $JD_KEY_BASE/$JD_KEY2
