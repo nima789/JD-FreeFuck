@@ -71,13 +71,11 @@ function EnvStructures() {
 
 ## 部署私钥：
 function PrivateKeyInstallation() {
-    ls $JD_KEY_BASE | grep jd_scripts -wq
-    if [ $? -eq 0 ]; then
+    #删除旧的
     rm -r $JD_KEY_BASE/$JD_KEY1
     rm -r $JD_KEY_BASE/$JD_KEY2
     rm -r $JD_KEY_BASE/$JD_KEY3
     rm -r $JD_KEY_BASE/$JD_KEY4
-    fi
     ##下载私钥
     wget -P $JD_KEY_BASE $JD_KEY_URL$JD_KEY1
     wget -P $JD_KEY_BASE $JD_KEY_URL$JD_KEY2
