@@ -91,7 +91,6 @@ function PrivateKeyInstallation() {
     rm -r $JD_KEY_BASE/$JD_KEY2
     rm -r $JD_KEY_BASE/$JD_KEY3
     rm -r $JD_KEY_BASE/$JD_KEY4
-    fi
     ##下载私钥
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY1
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY2
