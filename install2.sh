@@ -57,7 +57,6 @@ function EnvStructures() {
     firewall-cmd --zone=public --add-port=5678/tcp --permanent >/dev/null 2>&1
     systemctl reload firewalld >/dev/null 2>&1
         
-        pkg update -y
         ## 卸载 Nodejs 旧版本，从而确保安装新版本
         pkg remove -y nodejs npm >/dev/null 2>&1
         rm -rf /data/data/com.termux/files/usr/etc/apt/sources.list.d/nodesource.list
