@@ -3,9 +3,9 @@
 ## 安装目录
 BASE="/jd"
 ## 项目分支
-JD_BASE_BRANCH="master"
+JD_BASE_BRANCH="jd_base"
 ## 项目地址
-JD_BASE_URL="git@jd_base_gitee:supermanito/jd_base.git"
+JD_BASE_URL="https://github.com/nima789/JD-FreeFuck.git"
 ## 活动脚本库私钥
 JD_KEY_URL="https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/.ssh/"
 JD_KEY_BASE="/root/.ssh"
