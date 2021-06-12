@@ -17,10 +17,10 @@ function Installation() {
     ## 判定Nodejs是否安装成功，否则跳出
     VERIFICATION=$(node -v | cut -c2)
     if [ $VERIFICATION = "1" ]; then
-            ProjectDeployment
-            SetConfig
-            PanelJudgment
-            UseNotes
+     ProjectDeployment
+     SetConfig
+     PanelJudgment
+     UseNotes
     else
         NodejsFailureTips
     fi
