@@ -21,9 +21,6 @@ function Installation() {
             SetConfig
             PanelJudgment
             UseNotes
-        else
-            PrivateKeyFailureTips
-        fi
     else
         NodejsFailureTips
     fi
