@@ -28,11 +28,6 @@ function Installation() {
 
 ## 环境判定：
 function EnvJudgment() {
-    ## 当前用户判定：
-    if [ $UID -ne 0 ]; then
-        echo -e '\033[31m ------------ Permission no enough, please use user ROOT! ------------ \033[0m'
-        exit
-    fi
     ## 网络环境判定：
     ping -c 1 www.baidu.com >/dev/null 2>&1
     if [ $? -ne 0 ]; then
