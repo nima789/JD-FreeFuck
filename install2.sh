@@ -17,10 +17,13 @@ function Installation() {
     ## 判定Nodejs是否安装成功，否则跳出
     VERIFICATION=$(node -v | cut -c2)
     if [ $VERIFICATION = "1" ]; then
-     ProjectDeployment
-     SetConfig
-     PanelJudgment
-     UseNotes
+            ProjectDeployment
+            SetConfig
+            PanelJudgment
+            UseNotes
+        else
+            PrivateKeyFailureTips
+        fi
     else
         NodejsFailureTips
     fi
@@ -31,10 +34,6 @@ function EnvJudgment() {
     ## 网络环境判定：
     ping -c 1 www.baidu.com >/dev/null 2>&1
     if [ $? -ne 0 ]; then
-        apt-get install -y iputils-ping
-    fi
-    ping -c 1 www.baidu.com >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
         echo -e "\033[31m ----- Network connection error.Please check the network environment and try again later! ----- \033[0m"
         exit
     fi
@@ -43,36 +42,32 @@ function EnvJudgment() {
 ## 环境搭建：
 function EnvStructures() {
     Welcome
-    ## 修改系统时区：
-    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime >/dev/null 2>&1
-    timedatectl set-timezone "Asia/Shanghai" >/dev/null 2>&1
     ## 放行控制面板需要用到的端口
     firewall-cmd --zone=public --add-port=5678/tcp --permanent >/dev/null 2>&1
     systemctl reload firewalld >/dev/null 2>&1
-    
-        ## 更新软件源，列出索引
-        apt update
+        
+        pkg update -y
         ## 卸载 Nodejs 旧版本，从而确保安装新版本
-        apt remove -y nodejs npm >/dev/null 2>&1
-        rm -rf /etc/apt/sources.list.d/nodesource.list
+        pkg remove -y nodejs npm >/dev/null 2>&1
+        rm -rf /data/data/com.termux/files/usr/etc/apt/sources.list.d/nodesource.list
         ## 安装需要的软件包
-        apt install -y wget curl net-tools openssh-server git perl moreutils
+        pkg install -y wget curl net-tools git perl moreutils cronie openssh
         ## 安装 Nodejs 与 npm
         curl -sL https://deb.nodesource.com/setup_14.x | bash -
         DownloadTip
-        apt install -y nodejs
-        apt autoremove -y
+        pkg install -y nodejs
+        pkg autoremove -y
 }
 
 ## 项目部署：
 function ProjectDeployment() {
     ## 卸载旧版本
     rm -rf $BASE
-    rm -rf /usr/local/bin/jd
-    rm -rf /usr/local/bin/git_pull
-    rm -rf /usr/local/bin/rm_log
-    rm -rf /usr/local/bin/export_sharecodes
-    rm -rf /usr/local/bin/run_all
+    rm -rf /data/data/com.termux/files/usr/bin/jd
+    rm -rf /data/data/com.termux/files/usr/bin/git_pull
+    rm -rf /data/data/com.termux/files/usr/bin/rm_log
+    rm -rf /data/data/com.termux/files/usr/bin/export_sharecodes
+    rm -rf /data/data/com.termux/files/usr/bin/run_all
     ## 克隆项目
     git clone -b $JD_BASE_BRANCH $JD_BASE_URL $BASE
     ## 创建目录
@@ -96,14 +91,15 @@ function ProjectDeployment() {
     bash $BASE/git_pull.sh
     bash $BASE/git_pull.sh >/dev/null 2>&1
     ## 创建软链接
-    ln -sf $BASE/jd.sh /usr/local/bin/jd
-    ln -sf $BASE/git_pull.sh /usr/local/bin/git_pull
-    ln -sf $BASE/rm_log.sh /usr/local/bin/rm_log
-    ln -sf $BASE/export_sharecodes.sh /usr/local/bin/export_sharecodes
-    ln -sf $BASE/run_all.sh /usr/local/bin/run_all
+    ln -sf $BASE/jd.sh /data/data/com.termux/files/usr/bin/jd
+    ln -sf $BASE/git_pull.sh /data/data/com.termux/files/usr/bin/git_pull
+    ln -sf $BASE/rm_log.sh /data/data/com.termux/files/usr/bin/rm_log
+    ln -sf $BASE/export_sharecodes.sh /data/data/com.termux/files/usr/bin/export_sharecodes
+    ln -sf $BASE/run_all.sh /data/data/com.termux/files/usr/bin/run_all
     ## 定义全局变量
-    echo "export JD_DIR=$BASE" >>/etc/profile
-    source /etc/profile
+    echo "export JD_DIR=$BASE" >>/data/data/com.termux/files/usr/etc/profile
+    source /data/data/com.termux/files/usr/etc/profile
+    wget https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/mb.sh
 }
 
 ## 判定控制面板安装结果：
