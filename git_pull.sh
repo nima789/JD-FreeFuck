@@ -25,7 +25,7 @@ ContentNewTask=${ShellDir}/new_task
 ContentDropTask=${ShellDir}/drop_task
 SendCount=${ShellDir}/send_count
 isTermux=${ANDROID_RUNTIME_ROOT}${ANDROID_ROOT}
-ScriptsURL=https://mirror.ghproxy.com/https://github.com/nima789/JD-FreeFuck.git
+ScriptsURL=https://ghproxy.com/https://github.com/chinnkarahoi/jd_scripts.git
 
 ## 更新crontab，gitee服务器同一时间限制5个链接，因此每个人更新代码必须错开时间，每次执行git_pull随机生成。
 ## 每天次数随机，更新时间随机，更新秒数随机，至少6次，至多12次，大部分为8-10次，符合正态分布。
@@ -54,14 +54,15 @@ function Git_PullShell() {
     cd ${ShellDir}
     git fetch --all
     ExitStatusShell=$?
-    git reset --hard
+    git reset --hard origin/master
+
     git pull
 }
 
 ## 克隆scripts
 function Git_CloneScripts() {
     echo -e "\n开始克隆仓库 /jd/scripts\n"
-    git clone -b scripts ${ScriptsURL} ${ScriptsDir}
+    git clone -b master ${ScriptsURL} ${ScriptsDir}
     ExitStatusScripts=$?
     echo
 }
@@ -72,7 +73,7 @@ function Git_PullScripts() {
     cd ${ScriptsDir}
     git fetch --all
     ExitStatusScripts=$?
-    git reset --hard
+    git reset --hard 
     git pull
     echo ''
 }
@@ -130,9 +131,20 @@ function Diff_Cron() {
 
         cat ${ListCronLxk} | grep -E "j[drx]_\w+\.js" | perl -pe "s|.+(j[drx]_\w+)\.js.+|\1|" | sort -u >${ListJs}
 
-        if [ ${EnableExtraShell} = "true" ]; then
-            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -Eio "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListJs}
-            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -Eio "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListTask}
+        if [ ${EnableExtraShell} == "true" ]; then
+            if [ ${EnableExtraShellUpdate} == "true" ]; then
+                echo ${EnableExtraShellURL} | grep "SuperManito" -q
+                if [ $? -eq 0 ]; then
+                    grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | sed "s/jd_jxmc/jx_pasture/g" | sed "s/jd_star_shop/jd_star_store/g" | sort -u >>${ListJs}
+                    grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | sed "s/jd_jxmc/jx_pasture/g" | sed "s/jd_star_shop/jd_star_store/g" | sort -u >>${ListTask}
+                else
+                    grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListJs}
+                    grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListTask}
+                fi
+            else
+                grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListJs}
+                grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListTask}
+            fi
         fi
 
         grep -vwf ${ListTask} ${ListJs} >${ListJsAdd}
@@ -378,6 +390,8 @@ echo -e "+-----------------------------------------------------------+"
 
 ## 更新源码
 [ -d ${ShellDir}/.git ] && Git_PullShell
+## 赋权
+chmod 777 ${ShellDir}/*
 
 ## 克隆或更新js脚本
 [ -f ${ScriptsDir}/package.json ] && PackageListOld=$(cat ${ScriptsDir}/package.json)
@@ -417,5 +431,4 @@ else
     Run_All
 fi
 
-## 赋权
 chmod 777 ${ShellDir}/*
