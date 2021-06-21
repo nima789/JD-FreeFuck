@@ -71,7 +71,7 @@ function ProjectDeployment() {
     mkdir $BASE/config
     mkdir $BASE/log
     ## 根据安装目录配置定时任务
-    sed -i "s#BASE#$BASE#g" $BASE/sample/computer.list.sample
+    sed -i "s#BASE#$BASE#g" $BASE/sample/termux.list.sample
     ## 创建项目配置文件与定时任务配置文件
     cp $BASE/sample/config.sh.sample $BASE/config/config.sh
     cp $BASE/sample/computer.list.sample $BASE/config/crontab.list
@@ -96,7 +96,6 @@ function ProjectDeployment() {
     ## 定义全局变量
     echo "export JD_DIR=$BASE" >>/data/data/com.termux/files/usr/etc/profile
     source /data/data/com.termux/files/usr/etc/profile
-    wget https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/mb.sh
 }
 
 ## 判定控制面板安装结果：
