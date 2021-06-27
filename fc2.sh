@@ -11,8 +11,7 @@ JD_KEY_BASE="/data/data/com.termux/files/home/.ssh"
 JD_KEY_URL="https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/.ssh2/"
 JD_KEY1="config"
 JD_KEY2="jd_base"
-JD_KEY3="jd_scripts"
-JD_KEY4="known_hosts"
+JD_KEY3="known_hosts"
 
 ## 定义变量：
 ## 组合各个函数模块部署项目：
@@ -76,18 +75,15 @@ function PrivateKeyInstallation() {
     rm -r $JD_KEY_BASE/$JD_KEY1
     rm -r $JD_KEY_BASE/$JD_KEY2
     rm -r $JD_KEY_BASE/$JD_KEY3
-    rm -r $JD_KEY_BASE/$JD_KEY4
     ##下载私钥
     wget -P $JD_KEY_BASE $JD_KEY_URL$JD_KEY1
     wget -P $JD_KEY_BASE $JD_KEY_URL$JD_KEY2
     wget -P $JD_KEY_BASE $JD_KEY_URL$JD_KEY3
-    wget -P $JD_KEY_BASE $JD_KEY_URL$JD_KEY4
     ## 安装私钥
     chmod 700 $JD_KEY_BASE
     chmod 600 $JD_KEY_BASE/$JD_KEY1
     chmod 600 $JD_KEY_BASE/$JD_KEY2
     chmod 600 $JD_KEY_BASE/$JD_KEY3
-    chmod 600 $JD_KEY_BASE/$JD_KEY4  
 }
 
 ## 项目部署：
