@@ -1,7 +1,3 @@
 Host jd_base_gitee
 	Hostname gitee.com
 	IdentityFile=/data/data/com.termux/files/home/.ssh/jd_base
-
-Host jd_scripts_gitee
-	Hostname gitee.com
-	IdentityFile=/data/data/com.termux/files/home/.ssh/jd_scripts
