@@ -96,6 +96,7 @@ function ProjectDeployment() {
     ## 定义全局变量
     echo "export JD_DIR=$BASE" >>/data/data/com.termux/files/usr/etc/profile
     source /data/data/com.termux/files/usr/etc/profile
+    wget -P /data/data/com.termux/files/home https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/mb.sh
 }
 
 ## 判定控制面板安装结果：
