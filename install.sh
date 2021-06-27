@@ -25,7 +25,7 @@ function Installation() {
     if [ $VERIFICATION = "1" ]; then
         PrivateKeyInstallation
         ## 判定私钥是否安装成功，否则跳出
-        ls /root/.ssh | grep jd_scripts -wq
+        ls /root/.ssh | grep jd_base -wq
         if [ $? -eq 0 ]; then
             ProjectDeployment
             SetConfig
