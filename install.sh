@@ -11,8 +11,7 @@ JD_KEY_URL="https://raw.gitwj.workers.dev/nima789/JD-FreeFuck/part2/.ssh/"
 JD_KEY_BASE="/root/.ssh"
 JD_KEY1="config"
 JD_KEY2="jd_base"
-JD_KEY3="jd_scripts"
-JD_KEY4="known_hosts"
+JD_KEY3="known_hosts"
 
 ## 定义变量：
 ## 组合各个函数模块部署项目：
@@ -90,18 +89,15 @@ function PrivateKeyInstallation() {
     rm -r $JD_KEY_BASE/$JD_KEY1
     rm -r $JD_KEY_BASE/$JD_KEY2
     rm -r $JD_KEY_BASE/$JD_KEY3
-    rm -r $JD_KEY_BASE/$JD_KEY4
     ##下载私钥
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY1
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY2
     wget -P /root/.ssh $JD_KEY_URL$JD_KEY3
-    wget -P /root/.ssh $JD_KEY_URL$JD_KEY4
     ## 安装私钥
     chmod 700 /root/.ssh
     chmod 600 /root/.ssh/$JD_KEY1
     chmod 600 /root/.ssh/$JD_KEY2
-    chmod 600 /root/.ssh/$JD_KEY3
-    chmod 600 /root/.ssh/$JD_KEY4  
+    chmod 600 /root/.ssh/$JD_KEY3 
 }
 
 ## 项目部署：
