@@ -63,6 +63,8 @@ function Git_CloneScripts() {
     echo -e "\n开始克隆仓库 /jd/scripts\n"
     git clone -b scripts ${ScriptsURL} ${ScriptsDir}
     ExitStatusScripts=$?
+    [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
+    [ -f ${ListCronLxk} ] || mv -f ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
     echo
 }
 
@@ -70,11 +72,14 @@ function Git_CloneScripts() {
 function Git_PullScripts() {
     echo -e "\n开始更新仓库 /jd/scripts\n"
     cd ${ScriptsDir}
+    [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
+    wget -q https://gitee.com/SuperManito/scripts/raw/master/crontab_list.sh -O ${ListCronLxk}
+    ExitStatusCronLxk=$?
+    [ ${ExitStatusCronLxk} -ne 0 ] && mv -f ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
     git fetch --all
     ExitStatusScripts=$?
-    git reset --hard 
+    git reset --hard
     git pull
-    echo ''
 }
 
 ## 用户数量UserSum
