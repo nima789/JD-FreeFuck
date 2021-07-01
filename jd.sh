@@ -52,7 +52,7 @@ function Count_UserSum() {
 
   for ((d = 36; d <= 1000; d++)); do
     Del=Cookie$d
-    sed -i "/${!Del}/d" ${FileConf} || break
+    grep -q "Cookie36" ${FileConf} && sed -i "/${!Del}/d" ${FileConf} || break
   done
 }
 
@@ -186,7 +186,7 @@ function Help() {
     Name=$(grep "new Env" ${ListOtherScripts[i]} | awk -F "'|\"" '{print $2}')
     echo -e "$(($i + 1)).${Name}：${ListOtherScripts[i]}"
   done
-  echo -e "\n注：所有以 jd、jr、jx 开头的脚本会被识别成 lxk0301 大佬的脚本，本地导入的脚本不会随更新而自动删除\n"
+  echo -e "\n注：所有以 jd、jr、jx 开头的脚本会被识别成 Scripts 仓库的脚本，本地导入的脚本不会随更新而自动删除\n"
 }
 
 ## nohup

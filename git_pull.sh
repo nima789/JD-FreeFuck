@@ -54,7 +54,7 @@ function Git_PullShell() {
     cd ${ShellDir}
     git fetch --all
     ExitStatusShell=$?
-    git reset --hard
+    git reset --hard origin/master
     git pull
 }
 
@@ -63,6 +63,9 @@ function Git_CloneScripts() {
     echo -e "\n开始克隆仓库 /jd/scripts\n"
     git clone -b main ${ScriptsURL} ${ScriptsDir}
     ExitStatusScripts=$?
+    [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
+    [ -f ${ListCronLxk} ] || mv -f ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
+    ExitStatusCronLxk=$?
     echo
 }
 
@@ -70,11 +73,14 @@ function Git_CloneScripts() {
 function Git_PullScripts() {
     echo -e "\n开始更新仓库 /jd/scripts\n"
     cd ${ScriptsDir}
+    [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
+    wget -q https://gitee.com/SuperManito/scripts/raw/master/crontab_list.sh -O ${ListCronLxk}
+    ExitStatusCronLxk=$?
+    [ ${ExitStatusCronLxk} -ne 0 ] && mv -f ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
     git fetch --all
     ExitStatusScripts=$?
-    git reset --hard
+    git reset --hard origin/main
     git pull
-    echo ''
 }
 
 ## 用户数量UserSum
@@ -130,9 +136,9 @@ function Diff_Cron() {
 
         cat ${ListCronLxk} | grep -E "j[drx]_\w+\.js" | perl -pe "s|.+(j[drx]_\w+)\.js.+|\1|" | sort -u >${ListJs}
 
-        if [ ${EnableExtraShell} = "true" ]; then
-            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -Eio "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListJs}
-            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -Eio "\w+\.js" | sed "s/\.js//g" | sort -u >>${ListTask}
+        if [[ -n ${EnableExtraShell} && ${EnableExtraShell} == "true" ]]; then
+            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | grep -v 'Tokens' | sort -u >>${ListJs}
+            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | grep -v 'Tokens' | sort -u >>${ListTask}
         fi
 
         grep -vwf ${ListTask} ${ListJs} >${ListJsAdd}
@@ -190,13 +196,14 @@ function Notify_Version() {
 ## npm install 子程序，判断是否为安卓，判断是否安装有yarn
 function Npm_InstallSub() {
     if [ -n "${isTermux}" ]; then
-        npm install --no-bin-links || npm install --no-bin-links --registry=https://registry.npm.taobao.org
+        npm install || npm install --registry=https://registry.npm.taobao.org
     elif ! type yarn >/dev/null 2>&1; then
         npm install || npm install --registry=https://registry.npm.taobao.org
     else
         echo -e "检测到本机安装了 yarn，使用 yarn 替代 npm...\n"
         yarn install || yarn install --registry=https://registry.npm.taobao.org
     fi
+    npm install canvas --build-from-source
 }
 
 ## npm install
@@ -204,7 +211,7 @@ function Npm_Install() {
     cd ${ScriptsDir}
     if [[ "${PackageListOld}" != "$(cat package.json)" ]]; then
         echo -e "检测到package.json有变化，运行 npm install...\n"
-        Npm_InstallSub
+        npm install || npm install --registry=https://registry.npm.taobao.org
         if [ $? -ne 0 ]; then
             echo -e "\nnpm install 运行不成功，自动删除 ${ScriptsDir}/node_modules 后再次尝试一遍..."
             rm -rf ${ScriptsDir}/node_modules
@@ -214,7 +221,7 @@ function Npm_Install() {
 
     if [ ! -d ${ScriptsDir}/node_modules ]; then
         echo -e "运行 npm install...\n"
-        Npm_InstallSub
+        npm install || npm install --registry=https://registry.npm.taobao.org
         if [ $? -ne 0 ]; then
             echo -e "\nnpm install 运行不成功，自动删除 ${ScriptsDir}/node_modules...\n"
             echo -e "请进入 ${ScriptsDir} 目录后按照wiki教程手动运行 npm install...\n"
@@ -315,12 +322,10 @@ function ExtraShell() {
     if [[ ${EnableExtraShellUpdate} == true ]]; then
         wget -q $EnableExtraShellURL -O ${FileDiy}
         if [ $? -eq 0 ]; then
-            echo -e "自定义 DIY 脚本同步完成......"
-            echo -e ''
+            echo -e "自定义脚本同步完成 [Done]\n"
             sleep 2s
         else
-            echo -e "\033[31m自定义 DIY 脚本同步失败！\033[0m"
-            echo -e ''
+            echo -e "\033[31m自定义脚本同步失败，请检查原因或再次执行更新命令 ......\033[0m\n"
             sleep 2s
         fi
     fi
@@ -364,7 +369,6 @@ function Run_All() {
 }
 
 ## 在日志中记录时间与路径
-echo -e ''
 echo -e "+----------------- 开 始 执 行 更 新 脚 本 -----------------+"
 echo -e ''
 echo -e "   活动脚本目录：${ScriptsDir}"
@@ -378,13 +382,16 @@ echo -e "+-----------------------------------------------------------+"
 
 ## 更新源码
 [ -d ${ShellDir}/.git ] && Git_PullShell
+## 赋权
+chmod 777 ${ShellDir}/*
 
 ## 克隆或更新js脚本
 [ -f ${ScriptsDir}/package.json ] && PackageListOld=$(cat ${ScriptsDir}/package.json)
 [ -d ${ScriptsDir}/.git ] && Git_PullScripts || Git_CloneScripts
-[ -f ${ScriptsDir}/sendNotify.js ] && sed -i '/desp += author;/a\  if (text.includes("FreeFuck") || desp.includes("FreeFuck")) return ;' ${ScriptsDir}/sendNotify.js
+[ ${ExitStatusCronLxk} -ne 0 ] && echo -e "\n\033[33mScripts仓库脚本定时任务清单拉取失败，已启用备份\033[0m"
+# [ -f ${ScriptsDir}/sendNotify.js ] && sed -i '/desp += author;/a\  if (text.includes("FreeFuck") || desp.includes("FreeFuck")) return ;' ${ScriptsDir}/sendNotify.js
 
-echo -e "+----------------------- 郑 重 提 醒 -----------------------+"
+echo -e "\n+----------------------- 郑 重 提 醒 -----------------------+"
 echo -e ""
 echo -e "  本项目目前闭源并且仅面向内部开放，脚本免费使用仅供于学习！"
 echo -e ""
@@ -394,8 +401,7 @@ echo -e "  我们始终致力于打击使用本项目进行违法贩卖行为的
 echo -e ""
 echo -e "  我们不会放纵某些行为，不保证不采取非常手段，请勿挑战底线！"
 echo -e ""
-echo -e "+-----------------------------------------------------------+"
-echo -e ''
+echo -e "+-----------------------------------------------------------+\n"
 
 ## 执行各函数
 if [[ ${ExitStatusScripts} -eq 0 ]]; then
@@ -411,11 +417,10 @@ if [[ ${ExitStatusScripts} -eq 0 ]]; then
     Run_All
     echo -e "活动脚本更新完成......\n"
 else
-    echo -e "\033[31mScripts仓库脚本更新失败，请检查原因或再次执行更新命令 ......\033[0m"
+    echo -e "\033[31mScripts仓库脚本更新失败，请检查原因或再次执行更新命令 ......\033[0m\n"
     Change_ALL
     ExtraShell
     Run_All
 fi
 
-## 赋权
 chmod 777 ${ShellDir}/*
