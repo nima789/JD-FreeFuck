@@ -54,7 +54,7 @@ function Git_PullShell() {
     cd ${ShellDir}
     git fetch --all
     ExitStatusShell=$?
-    git reset --hard origin/master
+    git reset --hard origin/jd_base
     git pull
 }
 
