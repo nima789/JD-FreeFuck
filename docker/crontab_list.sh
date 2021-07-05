@@ -129,4 +129,4 @@
 # 点点券
 10 0,20 * * * node /scripts/jd_necklace_new.js >> /scripts/logs/jd_necklace_new.log 2>&1
 # 预存验证
-58 7,15,23 * * * node /scripts/jd_validate.js >> /scripts/logs/jd_validate.log 2>&1
+58 7,15,23 * * * node /scripts/jd_validate_Worker.js >> /scripts/logs/jd_validate_Worker.log 2>&1
