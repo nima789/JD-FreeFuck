@@ -64,9 +64,8 @@ function Git_CloneScripts() {
     git clone -b main ${ScriptsURL} ${ScriptsDir}
     ExitStatusScripts=$?
     [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
-    [ -f ${ListCronLxk} ] || mv -f ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
+    [ -f ${ListCronLxk} ] || cp -rf ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
     ExitStatusCronLxk=$?
-    echo
 }
 
 ## 更新scripts
@@ -133,18 +132,18 @@ function Diff_Cron() {
         else
             grep "${ShellDir}/" ${ListCron} | grep -E " j[drx]_\w+" | perl -pe "s|.+ (j[drx]_\w+).*|\1|" | sort -u >${ListTask}
         fi
-
         cat ${ListCronLxk} | grep -E "j[drx]_\w+\.js" | perl -pe "s|.+(j[drx]_\w+)\.js.+|\1|" | sort -u >${ListJs}
 
-        if [[ -n ${EnableExtraShell} && ${EnableExtraShell} == "true" ]]; then
-            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | grep -v 'Tokens' | sort -u >>${ListJs}
-            grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js" | sed "s/\.js//g" | grep -v 'Tokens' | sort -u >>${ListTask}
+        if [ -f ${FileDiy} ]; then
+            if [[ -n ${EnableExtraShell} && ${EnableExtraShell} == "true" ]]; then
+                grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js|\w+\.py|\w+\.ts" | perl -pe "{s|\.js||; s|\.py||; s|\.ts||}" | grep -v 'Tokens' | sort -u >>${ListJs}
+                grep "my_scripts_list" ${FileDiy} | grep -v '#' | grep -ioE "\w+\.js|\w+\.py|\w+\.ts" | perl -pe "{s|\.js||; s|\.py||; s|\.ts||}" | grep -v 'Tokens' | sort -u >>${ListTask}
+            fi
         fi
-
         grep -vwf ${ListTask} ${ListJs} >${ListJsAdd}
         grep -vwf ${ListJs} ${ListTask} >${ListJsDrop}
     else
-        echo -e "${ListCron} 文件不存在，请先定义您自己的crontab.list...\n"
+        echo -e "${ListCron} 文件不存在，请先定义你自己的crontab.list...\n"
     fi
 }
 
@@ -196,22 +195,22 @@ function Notify_Version() {
 ## npm install 子程序，判断是否为安卓，判断是否安装有yarn
 function Npm_InstallSub() {
     if [ -n "${isTermux}" ]; then
-        npm install || npm install --registry=https://registry.npm.taobao.org
+        npm install --no-bin-links || npm install --no-bin-links --registry=https://registry.npm.taobao.org
     elif ! type yarn >/dev/null 2>&1; then
         npm install || npm install --registry=https://registry.npm.taobao.org
     else
         echo -e "检测到本机安装了 yarn，使用 yarn 替代 npm...\n"
         yarn install || yarn install --registry=https://registry.npm.taobao.org
     fi
-    npm install canvas --build-from-source
 }
 
 ## npm install
 function Npm_Install() {
     cd ${ScriptsDir}
     if [[ "${PackageListOld}" != "$(cat package.json)" ]]; then
+        echo -e "安装环境所需的软件包 ...\n"
         echo -e "检测到package.json有变化，运行 npm install...\n"
-        npm install || npm install --registry=https://registry.npm.taobao.org
+        Npm_InstallSub
         if [ $? -ne 0 ]; then
             echo -e "\nnpm install 运行不成功，自动删除 ${ScriptsDir}/node_modules 后再次尝试一遍..."
             rm -rf ${ScriptsDir}/node_modules
@@ -221,7 +220,7 @@ function Npm_Install() {
 
     if [ ! -d ${ScriptsDir}/node_modules ]; then
         echo -e "运行 npm install...\n"
-        npm install || npm install --registry=https://registry.npm.taobao.org
+        Npm_InstallSub
         if [ $? -ne 0 ]; then
             echo -e "\nnpm install 运行不成功，自动删除 ${ScriptsDir}/node_modules...\n"
             echo -e "请进入 ${ScriptsDir} 目录后按照wiki教程手动运行 npm install...\n"
@@ -316,18 +315,29 @@ function Add_Cron() {
     fi
 }
 
+## 用户数量UserSum
+function Count_UserSum() {
+    for ((i = 1; i <= 1000; i++)); do
+        Tmp=Cookie$i
+        CookieTmp=${!Tmp}
+        [[ ${CookieTmp} ]] && UserSum=$i || break
+    done
+}
+
 ## 自定义脚本功能
 function ExtraShell() {
     ## 自动同步用户自定义的diy.sh
     if [[ ${EnableExtraShellUpdate} == true ]]; then
-        wget -q $EnableExtraShellURL -O ${FileDiy}
+        wget -q --no-check-certificate $EnableExtraShellURL -O ${FileDiy}.new
         if [ $? -eq 0 ]; then
-            echo -e "自定义脚本同步完成 [Done]\n"
-            sleep 2s
+            mv -f "${FileDiy}.new" "${FileDiy}"
+            echo -e "\033[32m[Done]\033[0m 自定义脚本同步完成\n"
+            sleep 1s
         else
-            echo -e "\033[31m自定义脚本同步失败，请检查原因或再次执行更新命令 ......\033[0m\n"
-            sleep 2s
+            echo -e "\033[31m[ERROR]\033[0m 自定义脚本同步失败，请检查原因或再次执行更新命令......\n"
+            sleep 3s
         fi
+        [ -f "${FileDiy}.new" ] && rm -rf "${FileDiy}.new"
     fi
 
     ## 调用用户自定义的diy.sh
@@ -349,60 +359,61 @@ function Run_All() {
 
     ## 调整执行顺序
     sed -i "1i\jd_bean_change" ${FileRunAll} ## 置顶京豆变动通知
-    echo "jd_crazy_joy_coin" >>${FileRunAll} ## 末尾加入挂机脚本
+    # echo "jd_crazy_joy_coin" >>${FileRunAll} ## 末尾加入挂机脚本
 
     ## 去除不适合的活动脚本
-    ## 例：sed -i '/xxx/d' ${FileRunAll}
     sed -i '/jd_delCoupon/d' ${FileRunAll} ## 不执行 "京东家庭号" 活动
     sed -i '/jd_family/d' ${FileRunAll}    ## 不执行 "删除优惠券" 活动
     ## 第三方脚本
     sed -i '/jd_try/d' ${FileRunAll}
     sed -i '/jx_cfdtx/d' ${FileRunAll}
 
-    ## 自定义添加脚本
-    ## echo "bash ${ShellDir}/jd.sh xxx now" >>${FileRunAll}
-
     sed -i "s/^/bash ${ShellJd} &/g" ${FileRunAll}
-    sed -i 's/$/&.js now/g' ${FileRunAll}
+    sed -i 's/$/& now/g' ${FileRunAll}
     sed -i '1i\#!/bin/env bash' ${FileRunAll}
     sed -i '/^\s*$/d' ${FileRunAll}
 }
 
-## 在日志中记录时间与路径
-echo -e "+----------------- 开 始 执 行 更 新 脚 本 -----------------+"
-echo -e ''
-echo -e "   活动脚本目录：${ScriptsDir}"
-echo -e ''
-echo -e "   当前系统时间：$(date "+%Y-%m-%d %H:%M")"
-echo -e ''
-echo -e "+-----------------------------------------------------------+"
+function Title() {
+    echo -e "\n+----------------- 开 始 执 行 更 新 脚 本 -----------------+"
+    echo -e ''
+    echo -e "   脚本根目录：${ShellDir}"
+    echo -e ''
+    echo -e "   Scripts 仓库目录：${ScriptsDir}"
+    echo -e ''
+    echo -e "   当前系统时间：$(date "+%Y-%m-%d %H:%M")"
+    echo -e ''
+    echo -e "+-----------------------------------------------------------+"
+}
 
+function Notice() {
+    echo -e "\n+----------------------- 郑 重 提 醒 -----------------------+"
+    echo -e ""
+    echo -e "  本项目目前闭源并且仅面向内部开放，脚本免费使用仅供于学习！"
+    echo -e ""
+    echo -e "  圈内资源禁止以任何形式发布到咸鱼等国内平台，否则后果自负！"
+    echo -e ""
+    echo -e "  我们始终致力于打击使用本项目进行违法贩卖行为的个人或组织！"
+    echo -e ""
+    echo -e "  我们不会放纵某些行为，不保证不采取非常手段，请勿挑战底线！"
+    echo -e ""
+    echo -e "+-----------------------------------------------------------+\n"
+}
+
+## 在日志中记录时间与路径
+Title
 ## 更新crontab
 [[ $(date "+%-H") -le 2 ]] && Update_Cron
-
 ## 更新源码
 [ -d ${ShellDir}/.git ] && Git_PullShell
 ## 赋权
 chmod 777 ${ShellDir}/*
-
 ## 克隆或更新js脚本
 [ -f ${ScriptsDir}/package.json ] && PackageListOld=$(cat ${ScriptsDir}/package.json)
 [ -d ${ScriptsDir}/.git ] && Git_PullScripts || Git_CloneScripts
-[ ${ExitStatusCronLxk} -ne 0 ] && echo -e "\n\033[33mScripts仓库脚本定时任务清单拉取失败，已启用备份\033[0m"
 # [ -f ${ScriptsDir}/sendNotify.js ] && sed -i '/desp += author;/a\  if (text.includes("FreeFuck") || desp.includes("FreeFuck")) return ;' ${ScriptsDir}/sendNotify.js
-
-echo -e "\n+----------------------- 郑 重 提 醒 -----------------------+"
-echo -e ""
-echo -e "  本项目目前闭源并且仅面向内部开放，脚本免费使用仅供于学习！"
-echo -e ""
-echo -e "  圈内资源禁止以任何形式发布到咸鱼等国内平台，否则后果自负！"
-echo -e ""
-echo -e "  我们始终致力于打击使用本项目进行违法贩卖行为的个人或组织！"
-echo -e ""
-echo -e "  我们不会放纵某些行为，不保证不采取非常手段，请勿挑战底线！"
-echo -e ""
-echo -e "+-----------------------------------------------------------+\n"
-
+[ ${ExitStatusCronLxk} -ne 0 ] && echo -e "\n\033[33m[WARN]\033[0m Scripts仓库脚本定时任务清单拉取失败，已启用备份"
+Notice
 ## 执行各函数
 if [[ ${ExitStatusScripts} -eq 0 ]]; then
     Change_ALL
@@ -415,12 +426,11 @@ if [[ ${ExitStatusScripts} -eq 0 ]]; then
     Add_Cron
     ExtraShell
     Run_All
-    echo -e "活动脚本更新完成......\n"
+    echo -e "\033[32m[Done]\033[0m 活动脚本更新完成\n"
 else
-    echo -e "\033[31mScripts仓库脚本更新失败，请检查原因或再次执行更新命令 ......\033[0m\n"
     Change_ALL
+    echo -e "\033[31m[ERROR]\033[0m Scripts仓库脚本更新失败，请检查原因或再次执行更新命令......\n"
     ExtraShell
     Run_All
 fi
-
 chmod 777 ${ShellDir}/*
