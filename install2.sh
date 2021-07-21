@@ -87,12 +87,14 @@ function ProjectDeployment() {
     ## 拉取活动脚本
     bash $BASE/git_pull.sh
     bash $BASE/git_pull.sh >/dev/null 2>&1
+    bash $BASE/docker/install_env.sh
     ## 创建软链接
     ln -sf $BASE/jd.sh /data/data/com.termux/files/usr/bin/jd
     ln -sf $BASE/git_pull.sh /data/data/com.termux/files/usr/bin/git_pull
     ln -sf $BASE/rm_log.sh /data/data/com.termux/files/usr/bin/rm_log
     ln -sf $BASE/export_sharecodes.sh /data/data/com.termux/files/usr/bin/export_sharecodes
     ln -sf $BASE/run_all.sh /data/data/com.termux/files/usr/bin/run_all
+    ln -sf $BASE/docker/install_env.sh /data/data/com.termux/files/usr/bin/install_env
     ## 定义全局变量
     echo "export JD_DIR=$BASE" >>/data/data/com.termux/files/usr/etc/profile
     source /data/data/com.termux/files/usr/etc/profile
