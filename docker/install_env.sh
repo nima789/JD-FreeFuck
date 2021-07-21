@@ -7,8 +7,8 @@ ShellDir=${JD_DIR:-$(
 )}
 [[ ${JD_DIR} ]] && ShellJd=jd || ShellJd=${ShellDir}/jd.sh
 ScriptsDir=${ShellDir}/scripts
-
 cd ${ScriptsDir}
+pip3 install requests
 npm install -g npm npm-install-peers
 npm install -g ts-node typescript --unsafe-perm=true --allow-root
 npm install -g ts-node typescript @types/node date-fns axios require tslib fs crypto-js ts-md5

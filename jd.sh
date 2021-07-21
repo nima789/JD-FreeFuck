@@ -170,15 +170,15 @@ function Help() {
 function ScriptsList() {
     ListScripts=($(
         cd ${ScriptsDir}
-        ls *.js | grep -E "j[drx]_" | grep -Eiv "jd_update.js|validate|api_test|env_copy"
+        ls *.js | grep -E "j[drx]_" | grep -Eiv "jd_update.js|validate|api_test|env_copy|Token"
     ))
     ListPythonScripts=($(
         cd ${ScriptsDir}
-        ls *.py | grep -Eiv "getCookie.py|jdEnv|Notify"
+        ls *.py | grep -Eiv "jdEnv|Notify"
     ))
     ListTypeScriptScripts=($(
         cd ${ScriptsDir}
-        ls *.ts | grep -Eiv "ts_test|AGENTS|validate"
+        ls *.ts | grep -Eiv "api_test|ts_test|AGENTS|validate|jdJxToken"
     ))
     ListOtherScripts=($(
         cd ${ScriptsDir}
@@ -192,14 +192,14 @@ function ScriptsList() {
     for ((i = 0; i < ${#ListScripts[*]}; i++)); do
         grep -Eq "^[const $ = ].*Env" ${ListScripts[i]}
         if [ $? -eq 0 ]; then
-            Name=$(grep -E "^[const $ = ].*Env" ${ListScripts[i]} | awk -F "'|\"" '{print $2}' | head -n 1)
+            Name=$(grep -E "^[const $ = ].*Env" ${ListScripts[i]} | awk -F "\(" '{print $2}' | awk -F "\)" '{print $1}' | sed 's:^.\(.*\).$:\1:' | head -1)
         else
             Name=$(grep -w "script-path" ${ListScripts[i]} | sed "s/\W//g" | sed "s/[0-9a-zA-Z_]//g" | head -n 1)
         fi
         echo -e "$(($i + 1)).${Name}：${ListScripts[i]}"
     done
 
-    echo -e "\nTypeScript 脚本（随缘使用）："
+    echo -e "\nTypeScript 脚本：\n脚本随缘使用，可使用tsc命令转换成js格式执行\n转换命令示例: tsc scripts/jd_foodRunning.ts"
     for ((i = 0; i < ${#ListTypeScriptScripts[*]}; i++)); do
         if [ ${ListTypeScriptScripts[i]} = "jd_joy_park.ts" ]; then
             Name="汪汪乐园"
@@ -207,14 +207,28 @@ function ScriptsList() {
             Name="京喜牧场"
         elif [ ${ListTypeScriptScripts[i]} = "jd_qq_pasture.ts" ]; then
             Name="星系牧场"
-        elif [ ${ListTypeScriptScripts[i]} = "jd_reward.ts" ]; then
+        elif [ ${ListTypeScriptScripts[i]} = "jd_joy_reward.ts" ]; then
             Name="宠汪汪兑换二代目"
         elif [ ${ListTypeScriptScripts[i]} = "jd_wishingPool.ts" ]; then
             Name="众筹许愿池"
         elif [ ${ListTypeScriptScripts[i]} = "jd_cfd.ts" ]; then
             Name="京喜财富岛"
         elif [ ${ListTypeScriptScripts[i]} = "jd_cfd_loop.ts" ]; then
-            Name="京喜财富岛接待游客"
+            Name="京喜财富岛热气球挂机"
+        elif [ ${ListTypeScriptScripts[i]} = "jd_cfd_stock.ts" ]; then
+            Name="京喜财富岛库存监控"
+        elif [ ${ListTypeScriptScripts[i]} = "jd_speed_redEnvelope.ts" ]; then
+            Name="极速版-发财大赢家"
+        elif [ ${ListTypeScriptScripts[i]} = "getCookie.ts" ]; then
+            Name="获取账号"
+        elif [ ${ListTypeScriptScripts[i]} = "jd_foodRunning.ts" ]; then
+            Name="零食街"
+        elif [ ${ListTypeScriptScripts[i]} = "jd_getUp.ts" ]; then
+            Name="早起福利"
+        elif [ ${ListTypeScriptScripts[i]} = "jd_cfd_cashOut.ts" ]; then
+            Name="京喜财富岛提现"
+        elif [ ${ListTypeScriptScripts[i]} = "jd_yili_cow.ts" ]; then
+            Name="伊利养牛记"
         else
             Name=""
         fi
@@ -230,7 +244,7 @@ function ScriptsList() {
     for ((i = 0; i < ${#ListOtherScripts[*]}; i++)); do
         grep -Eq "^[const $ = ].*Env" ${ListOtherScripts[i]}
         if [ $? -eq 0 ]; then
-            Name=$(grep -E "^[const $ = ].*Env" ${ListOtherScripts[i]} | awk -F "'|\"" '{print $2}' | head -n 1)
+            Name=$(grep -E "^[const $ = ].*Env" ${ListOtherScripts[i]} | awk -F "\(" '{print $2}' | awk -F "\)" '{print $1}' | sed 's:^.\(.*\).$:\1:' | head -1)
         else
             Name=$(grep -w "script-path" ${ListOtherScripts[i]} | sed "s/\W//g" | sed "s/[0-9a-zA-Z_]//g" | head -n 1)
         fi

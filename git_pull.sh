@@ -15,7 +15,7 @@ FileConf=${ConfigDir}/config.sh
 FileDiy=${ConfigDir}/diy.sh
 FileConfSample=${ShellDir}/sample/config.sh.sample
 ListCron=${ConfigDir}/crontab.list
-ListCronLxk=${ScriptsDir}/docker/crontab_list.sh
+ListCronPublic=${ShellDir}/docker/crontab_list.sh
 ListTask=${LogDir}/task.list
 ListJs=${LogDir}/js.list
 ListJsAdd=${LogDir}/js-add.list
@@ -63,19 +63,12 @@ function Git_CloneScripts() {
     echo -e "\n开始克隆仓库 /jd/scripts\n"
     git clone -b main ${ScriptsURL} ${ScriptsDir}
     ExitStatusScripts=$?
-    [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
-    [ -f ${ListCronLxk} ] || cp -rf ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
-    ExitStatusCronLxk=$?
 }
 
 ## 更新scripts
 function Git_PullScripts() {
     echo -e "\n开始更新仓库 /jd/scripts\n"
     cd ${ScriptsDir}
-    [ -d ${ScriptsDir}/docker ] || mkdir -p ${ScriptsDir}/docker
-    wget -q https://gitee.com/SuperManito/scripts/raw/master/crontab_list.sh -O ${ListCronLxk}
-    ExitStatusCronLxk=$?
-    [ ${ExitStatusCronLxk} -ne 0 ] && mv -f ${ShellDir}/docker/crontab_list.sh ${ListCronLxk}
     git fetch --all
     ExitStatusScripts=$?
     git reset --hard origin/main
@@ -132,7 +125,7 @@ function Diff_Cron() {
         else
             grep "${ShellDir}/" ${ListCron} | grep -E " j[drx]_\w+" | perl -pe "s|.+ (j[drx]_\w+).*|\1|" | sort -u >${ListTask}
         fi
-        cat ${ListCronLxk} | grep -E "j[drx]_\w+\.js" | perl -pe "s|.+(j[drx]_\w+)\.js.+|\1|" | sort -u >${ListJs}
+        cat ${ListCronPublic} | grep -E "j[drx]_\w+\.js" | perl -pe "s|.+(j[drx]_\w+)\.js.+|\1|" | sort -u >${ListJs}
 
         if [ -f ${FileDiy} ]; then
             if [[ -n ${EnableExtraShell} && ${EnableExtraShell} == "true" ]]; then
@@ -292,7 +285,7 @@ function Add_Cron() {
             if [[ ${Cron} == jd_bean_sign ]]; then
                 echo "4 0,9 * * * bash ${ShellJd} ${Cron}" >>${ListCron}
             else
-                cat ${ListCronLxk} | grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >>${ListCron}
+                cat ${ListCronPublic} | grep -E "\/${Cron}\." | perl -pe "s|(^.+)node */scripts/(j[drx]_\w+)\.js.+|\1bash ${ShellJd} \2|" >>${ListCron}
             fi
         done
 
@@ -412,7 +405,6 @@ chmod 777 ${ShellDir}/*
 [ -f ${ScriptsDir}/package.json ] && PackageListOld=$(cat ${ScriptsDir}/package.json)
 [ -d ${ScriptsDir}/.git ] && Git_PullScripts || Git_CloneScripts
 # [ -f ${ScriptsDir}/sendNotify.js ] && sed -i '/desp += author;/a\  if (text.includes("FreeFuck") || desp.includes("FreeFuck")) return ;' ${ScriptsDir}/sendNotify.js
-[ ${ExitStatusCronLxk} -ne 0 ] && echo -e "\n\033[33m[WARN]\033[0m Scripts仓库脚本定时任务清单拉取失败，已启用备份"
 Notice
 ## 执行各函数
 if [[ ${ExitStatusScripts} -eq 0 ]]; then
