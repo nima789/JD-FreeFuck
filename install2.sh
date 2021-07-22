@@ -5,7 +5,7 @@ BASE="/data/data/com.termux/files/home/jd"
 ## 项目分支
 JD_BASE_BRANCH="jd_base"
 ## 项目地址
-JD_BASE_URL="https://mirror.ghproxy.com/https://github.com/nima789/JD-FreeFuck.git"
+JD_BASE_URL="https://ghproxy.com/https://github.com/nima789/JD-FreeFuck.git"
 
 ## 定义变量：
 ## 组合各个函数模块部署项目：
