@@ -53,7 +53,6 @@ function EnvStructures() {
         curl -sL https://deb.nodesource.com/setup_14.x | bash -
         DownloadTip
         pkg install -y nodejs
-        pkg autoremove -y
 }
 
 ## 项目部署：
